@@ -1,5 +1,15 @@
 Yii2 OpenApi Specification Reader 模块
 ============
+原理是采用php的注释来写api文档，注释的语法采用php annotation方式进行解析。
+解析后符合OpenAPI  Specification 规范，可以通过 swagger UI 或 Redoc 进行渲染成可读性强带有交互的api文档。
+
+swagger UI
+
+![alt swagger UI](https://static1.smartbear.co/swagger/media/images/tools/opensource/swagger_ui.png?ext=.png "swagger UI")
+
+Redoc：
+
+![alt redoc](https://raw.githubusercontent.com/Redocly/redoc/master/demo/redoc-demo.png "redoc")
 
 这个模块集成了：
 * [swagger-php](https://github.com/zircote/swagger-php) 
