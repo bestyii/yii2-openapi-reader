@@ -11,7 +11,7 @@
     "openapi",
     "api"
   ],
-  "license": "MIT",
+  "license": "BSD 2",
   "authors": [
     {
       "name": "ez",
