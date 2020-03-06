@@ -1,9 +1,10 @@
 <?php
 
 
-namespace  bestyii\openapiReader\controllers;
+namespace bestyii\openapiReader\controllers;
 
 
+use app\modules\api\models\UserIdentity;
 use yii\helpers\Url;
 use yii\web\Controller;
 
@@ -17,12 +18,12 @@ class DefaultController extends Controller
     /**
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($uid = null)
     {
         $this->layout = '_clear';
         return $this->render('index', [
             'url' => Url::to(['default/yaml'], true),
-            'accessToken' =>  null
+            'accessToken' => !is_null($uid) ? (UserIdentity::findIdentity($uid))->access_token : null
         ]);
     }
 
@@ -49,6 +50,7 @@ class DefaultController extends Controller
     {
         return $this->getContent()->toYaml();
     }
+
     /**
      * The target OpenApi annotation.
      *
