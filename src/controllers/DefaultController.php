@@ -60,7 +60,13 @@ class DefaultController extends Controller
     {
         $content = '';
         if ($this->module->path) {
-            $path = \Yii::getAlias($this->module->path);
+            if(is_array($this->module->path)){
+                foreach ($this->module->path as $item){
+                    $path[] = \Yii::getAlias($item);
+                }
+            }else{
+                $path = \Yii::getAlias($this->module->path);
+            }
             $content = \OpenApi\scan($path);
             return $content;
         }
