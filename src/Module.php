@@ -13,7 +13,10 @@ use yii\web\NotFoundHttpException;
  */
 class Module extends \yii\base\Module
 {
-
+    /**
+     * @var string
+     */
+    public $defaultDoc;
     /**
      * @var mixed string or array
      */

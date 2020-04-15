@@ -18,11 +18,14 @@ class DefaultController extends Controller
     /**
      * @return string
      */
-    public function actionIndex($uid = null)
+    public function actionIndex($doc = null, $uid = null)
     {
+        if(is_null($doc) && is_array($this->module->path)){
+            $doc = $this->module->defaultDoc;
+        }
         $this->layout = '_clear';
         return $this->render('index', [
-            'url' => Url::to(['default/yaml'], true),
+            'url' => Url::to(['default/yaml','doc'=>$doc], true),
             'accessToken' => !is_null($uid) ? (UserIdentity::findIdentity($uid))->access_token : null
         ]);
     }
@@ -36,40 +39,38 @@ class DefaultController extends Controller
     }
 
     /**
-     * 返回json格式的描述文档
+     * @param $doc
+     * @return string 返回json格式的描述文档
      */
-    public function actionJson()
+    public function actionJson($doc = null)
     {
-        return $this->getContent()->toJson();
+        $docPath = $this->module->path;
+        $path = !is_null($doc) && isset($docPath[$doc]) ? \Yii::getAlias($docPath[$doc]) : \Yii::getAlias($this->module->path);
+
+        return $this->getContent($path)->toJson();
     }
 
     /**
-     * 返回Yaml格式的描述文档
+     * @param $doc
+     * @return string 返回Yaml格式的描述文档
      */
-    public function actionYaml()
+    public function actionYaml($doc = null)
     {
-        return $this->getContent()->toYaml();
+        $docPath = $this->module->path;
+        $path = !is_null($doc) && isset($docPath[$doc]) ? \Yii::getAlias($docPath[$doc]) : \Yii::getAlias($this->module->path);
+
+        return $this->getContent($path)->toYaml();
     }
 
     /**
      * The target OpenApi annotation.
-     *
+     * @param $path
      * @return  \OpenApi\Annotations\OpenApi
      */
-    public function getContent()
+    public function getContent($path)
     {
-        $content = '';
-        if ($this->module->path) {
-            if(is_array($this->module->path)){
-                foreach ($this->module->path as $item){
-                    $path[] = \Yii::getAlias($item);
-                }
-            }else{
-                $path = \Yii::getAlias($this->module->path);
-            }
-            $content = \OpenApi\scan($path);
-            return $content;
-        }
+
+        return \OpenApi\scan($path);
 
     }
 
