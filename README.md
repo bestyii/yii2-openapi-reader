@@ -47,7 +47,11 @@ You set url, where locate json file OR set path for scan
       ...
       'openapireader' => [
             'class' => \bestyii\openapiReader\Module::class,
-            'path' => '@frontend/modules/api',
+            'defaultDoc'=>'api',
+            'path' => [
+                 'api'=>'@app/modules/api',
+                 'openwork'=>'@app/modules/openwork',
+                 ],
             // disable page with your logic
             'isDisable' => function () {
                 return false;
