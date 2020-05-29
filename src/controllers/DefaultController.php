@@ -73,7 +73,7 @@ class DefaultController extends Controller
     private function getPath($doc = null)
     {
         $docPath = $this->module->path;
-        $path = null;
+        $path = '';
         if (!is_null($doc) && isset($docPath[$doc]) && is_string($docPath[$doc])) {
             $path = \Yii::getAlias($docPath[$doc]);
         } else if (!is_null($doc) && isset($docPath[$doc]) && is_array($docPath[$doc])) {
@@ -84,6 +84,7 @@ class DefaultController extends Controller
         } else {
             $path = \Yii::getAlias($this->module->path);
         }
+
         return $path;
     }
 
@@ -94,9 +95,7 @@ class DefaultController extends Controller
      */
     public function getContent($path)
     {
-
         return \OpenApi\scan($path);
-
     }
 
 }
