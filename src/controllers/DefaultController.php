@@ -73,10 +73,11 @@ class DefaultController extends Controller
     private function getPath($doc = null)
     {
         $docPath = $this->module->path;
-        $path = '';
+        $path = null;
         if (!is_null($doc) && isset($docPath[$doc]) && is_string($docPath[$doc])) {
             $path = \Yii::getAlias($docPath[$doc]);
         } else if (!is_null($doc) && isset($docPath[$doc]) && is_array($docPath[$doc])) {
+            $path = [];
             foreach ($docPath[$doc] as $itemPath) {
                 $path[] = \Yii::getAlias($itemPath);
             }
