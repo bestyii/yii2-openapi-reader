@@ -20,12 +20,12 @@ class DefaultController extends Controller
      */
     public function actionIndex($doc = null, $uid = null)
     {
-        if(is_null($doc) && is_array($this->module->path)){
+        if (is_null($doc) && is_array($this->module->path)) {
             $doc = $this->module->defaultDoc;
         }
         $this->layout = '_clear';
         return $this->render('index', [
-            'url' => Url::to(['default/yaml','doc'=>$doc], true),
+            'url' => Url::to(['default/yaml', 'doc' => $doc], true),
             'accessToken' => !is_null($uid) ? (UserIdentity::findIdentity($uid))->access_token : null
         ]);
     }
@@ -44,10 +44,14 @@ class DefaultController extends Controller
      */
     public function actionJson($doc = null)
     {
-        $docPath = $this->module->path;
-        $path = !is_null($doc) && isset($docPath[$doc]) ? \Yii::getAlias($docPath[$doc]) : \Yii::getAlias($this->module->path);
+        $path = $this->getPath($doc);
 
-        return $this->getContent($path)->toJson();
+        $content = $this->getContent($path)->toJson();
+
+        if (is_callable($this->module->afterRender)) {
+            return call_user_func($this->module->afterRender, $content);
+        }
+        return $content;
     }
 
     /**
@@ -56,10 +60,30 @@ class DefaultController extends Controller
      */
     public function actionYaml($doc = null)
     {
-        $docPath = $this->module->path;
-        $path = !is_null($doc) && isset($docPath[$doc]) ? \Yii::getAlias($docPath[$doc]) : \Yii::getAlias($this->module->path);
+        $path = $this->getPath($doc);
 
-        return $this->getContent($path)->toYaml();
+        $content = $this->getContent($path)->toYaml();
+
+        if (is_callable($this->module->afterRender)) {
+            return call_user_func($this->module->afterRender, $content);
+        }
+        return $content;
+    }
+
+    private function getPath($doc = null)
+    {
+        $docPath = $this->module->path;
+        $path = '';
+        if (!is_null($doc) && isset($docPath[$doc]) && is_string($docPath[$doc])) {
+            $path = \Yii::getAlias($docPath[$doc]);
+        } else if (!is_null($doc) && isset($docPath[$doc]) && is_array($docPath[$doc])) {
+            foreach ($docPath[$doc] as $itemPath) {
+                $path[] = \Yii::getAlias($itemPath);
+            }
+        } else {
+            $path = \Yii::getAlias($this->module->path);
+        }
+        return $path;
     }
 
     /**
