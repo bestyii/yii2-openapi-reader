@@ -51,6 +51,10 @@ You set url, where locate json file OR set path for scan
             'path' => [
                  'api'=>'@app/modules/api',
                  'openwork'=>'@app/modules/openwork',
+                 'group' => [
+                    '@grazio/api',
+                    '@grazio/leads'
+                    ]
                  ],
             // disable page with your logic
             'isDisable' => function () {
@@ -58,10 +62,19 @@ You set url, where locate json file OR set path for scan
             },
             // replace placeholders in swagger content
             'afterRender' => function ($content) {
-                $content = str_replace('{{host}}', 'http://example.com', $content);
-                $content = str_replace('{{basePath}}', '/api/v1', $content);
-                return $content;
-            }
+                            $content = str_replace(
+                                [
+                                    '{{SERVER_DESCRIPTION}}',
+                                    '{{HOST}}',
+                                    '{{BASE_PATH}}'
+                                ],
+                                [
+                                    'Localhost',
+                                    Yii::$app->request->hostInfo,
+                                    '/api'
+                                ], $content);
+                            return $content;
+                        }
        ]
         ...
     ],
