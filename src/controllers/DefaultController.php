@@ -4,7 +4,6 @@
 namespace bestyii\openapiReader\controllers;
 
 
-use app\modules\api\models\UserIdentity;
 use yii\helpers\Url;
 use yii\web\Controller;
 
@@ -18,15 +17,13 @@ class DefaultController extends Controller
     /**
      * @return string
      */
-    public function actionIndex($doc = null, $uid = null)
+    public function actionIndex($uid = null)
     {
-        if (is_null($doc) && is_array($this->module->path)) {
-            $doc = $this->module->defaultDoc;
-        }
+
         $this->layout = '_clear';
         return $this->render('index', [
-            'url' => Url::to(['default/yaml', 'doc' => $doc], true),
-            'accessToken' => !is_null($uid) ? (UserIdentity::findIdentity($uid))->access_token : null
+            'url' => Url::to(['default/yaml'], true),
+            'accessToken' => !is_null($uid) &&  class_exists('\grazio\user\models\UserIdentity') ? (\grazio\user\models\UserIdentity::findIdentity($uid))->access_token : null
         ]);
     }
 
@@ -42,50 +39,23 @@ class DefaultController extends Controller
      * @param $doc
      * @return string 返回json格式的描述文档
      */
-    public function actionJson($doc = null)
+    public function actionJson()
     {
-        $path = $this->getPath($doc);
-
-        $content = $this->getContent($path)->toJson();
-
-        if (is_callable($this->module->afterRender)) {
-            return call_user_func($this->module->afterRender, $content);
-        }
-        return $content;
+        return $this->getContent($this->module->path)->toJson();
     }
 
     /**
      * @param $doc
      * @return string 返回Yaml格式的描述文档
      */
-    public function actionYaml($doc = null)
+    public function actionYaml()
     {
-        $path = $this->getPath($doc);
-
-        $content = $this->getContent($path)->toYaml();
-
+        $yaml = $this->getContent($this->module->path)->toYaml();
         if (is_callable($this->module->afterRender)) {
-            return call_user_func($this->module->afterRender, $content);
-        }
-        return $content;
-    }
-
-    private function getPath($doc = null)
-    {
-        $docPath = $this->module->path;
-        $path = '';
-        if (!is_null($doc) && isset($docPath[$doc]) && is_string($docPath[$doc])) {
-            $path = \Yii::getAlias($docPath[$doc]);
-        } else if (!is_null($doc) && isset($docPath[$doc]) && is_array($docPath[$doc])) {
-            $path = [];
-            foreach ($docPath[$doc] as $itemPath) {
-                $path[] = \Yii::getAlias($itemPath);
-            }
-        } else {
-            $path = \Yii::getAlias($this->module->path);
+            $yaml = call_user_func($this->module->afterRender, $yaml);
         }
 
-        return $path;
+        return $yaml;
     }
 
     /**
@@ -95,6 +65,11 @@ class DefaultController extends Controller
      */
     public function getContent($path)
     {
+        $path = is_array($path) ? $path : [$path];
+        foreach ($path as $key => $value) {
+            $path[$key] = \Yii::getAlias($value);
+        }
+
         return \OpenApi\scan($path);
     }
 

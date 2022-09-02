@@ -43,41 +43,27 @@ Once the extension is installed, simply use it in your code by  :
 You set url, where locate json file OR set path for scan
 
 ```php
-'modules' => [
-      ...
-      'openapireader' => [
-            'class' => \bestyii\openapiReader\Module::class,
-            'defaultDoc'=>'api',
-            'path' => [
-                 'api'=>'@app/modules/api',
-                 'openwork'=>'@app/modules/openwork',
-                 'group' => [
-                    '@grazio/api',
-                    '@grazio/leads'
-                    ]
-                 ],
-            // disable page with your logic
-            'isDisable' => function () {
-                return false;
-            },
-            // replace placeholders in swagger content
-            'afterRender' => function ($content) {
-                            $content = str_replace(
-                                [
-                                    '{{SERVER_DESCRIPTION}}',
-                                    '{{HOST}}',
-                                    '{{BASE_PATH}}'
-                                ],
-                                [
-                                    'Localhost',
-                                    Yii::$app->request->hostInfo,
-                                    '/api'
-                                ], $content);
-                            return $content;
-                        }
-       ]
-        ...
-    ],
+if (YII_ENV_DEV) {
+ $config['modules']['openapireader'] = [
+        'class' => \bestyii\openapiReader\Module::class,
+        'defaultDoc' => 'api',
+        'path' => [
+            'api' => '@grazio/api',
+            'extensions' => '@app/extensions',
+        ],
+        // disable page with your logic
+        'isDisable' => function () {
+            return false;
+        },
+        // replace placeholders in swagger content
+        'afterRender' => function ($content) {
+            $content = str_replace('{{HOST}}', \yii\helpers\Url::base(true), $content);
+            $content = str_replace('{{BASE_PATH}}', '/api', $content);
+            $content = str_replace('{{SERVER_DESCRIPTION}}', 'description', $content);
+            return $content;
+        }
+    ];
+}
 ```
 
 
