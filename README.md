@@ -3,6 +3,12 @@ Yii2 OpenApi Specification Reader 模块
 原理是采用php的注释来写api文档，注释的语法采用php annotation方式进行解析。
 解析后符合OpenAPI  Specification 规范，可以通过 swagger UI 或 Redoc 进行渲染成可读性强带有交互的api文档。
 
+
+[![Latest Stable Version](https://poser.pugx.org/bestyii/yii2-openapi-reader/v/stable)](https://packagist.org/packages/bestyii/yii2-openapi-reader)
+[![Total Downloads](https://poser.pugx.org/bestyii/yii2-openapi-reader/downloads)](https://packagist.org/packages/bestyii/yii2-openapi-reader)
+[![License](https://poser.pugx.org/bestyii/yii2-openapi-reader/license)](https://packagist.org/packages/bestyii/yii2-openapi-reader)
+
+
 swagger UI
 
 ![alt swagger UI](https://static1.smartbear.co/swagger/media/images/tools/opensource/swagger_ui.png?ext=.png "swagger UI")
